@@ -1,0 +1,68 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║            رفع نظام كيان ERP إلى GitHub                        ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+🎯 الخطوات (نفذها بالترتيب):
+
+1️⃣  إنشاء Repository على GitHub:
+   
+   اذهب إلى: https://github.com/new
+   
+   - Repository name: kayan-erp
+   - Description: KAYAN ERP System - Enterprise Resource Planning
+   - Private أو Public (اختر ما تفضل)
+   - لا تختر أي خيارات أخرى
+   - اضغط "Create repository"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2️⃣  في Terminal، نفذ هذه الأوامر:
+
+cd /tmp/cc-agent/54831328/project
+
+git init
+
+git add .
+
+git commit -m "Initial commit - KAYAN ERP System"
+
+git remote add origin https://github.com/YOUR_USERNAME/kayan-erp.git
+
+git branch -M main
+
+git push -u origin main
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3️⃣  عند طلب Username and Password:
+
+Username: اسم مستخدمك على GitHub
+
+Password: استخدم الـ Token:
+ghp_5s3nPFYcZrjhVYqAE8O1Vwi1pbJA7D2NrLvk
+
+⚠️  لا تستخدم كلمة المرور العادية! استخدم الـ Token فقط!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4️⃣  بعد الرفع بنجاح:
+
+الرابط سيكون:
+https://github.com/YOUR_USERNAME/kayan-erp
+
+يمكنك مشاركته مع المبرمج المحلي!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 ملاحظات:
+
+✅ تأكد من استبدال YOUR_USERNAME باسم مستخدمك الحقيقي
+✅ استخدم الـ Token كـ Password
+✅ احفظ الـ Token في مكان آمن
+✅ لا تشاركه مع أحد
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+بالتوفيق! 🚀
