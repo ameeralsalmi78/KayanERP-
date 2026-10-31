@@ -29,10 +29,7 @@ if [ ! -d "$runtime_root/app" ]; then
   exit 1
 fi
 
-printf '%s\n' "KAYAN ERP staging: Next.js runtime found at archive root."
-
-# Copy the real RC1 application over the temporary wrapper files in the checkout.
-# Keep .git, rc1 archive parts, scripts and workflow metadata intact.
+printf '%s\n' 'KAYAN ERP staging: Next.js runtime found.'
 cp -a "$runtime_root"/. ./
 
 if [ ! -f package.json ] || [ ! -d app ]; then
@@ -40,12 +37,11 @@ if [ ! -f package.json ] || [ ! -d app ]; then
   exit 1
 fi
 
-printf '%s\n' 'KAYAN ERP staging: installing runtime dependencies...'
-if [ -f package-lock.json ]; then
-  npm ci
-else
-  npm install
-fi
+# The archived lockfile is stale relative to package.json. Regenerate it for staging
+# instead of letting npm ci fail before the application can be validated.
+printf '%s\n' 'KAYAN ERP staging: refreshing runtime dependency lock...'
+rm -f package-lock.json
+npm install --no-audit --no-fund
 
 printf '%s\n' 'KAYAN ERP staging: building Next.js application...'
 npx next build
