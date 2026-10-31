@@ -20,6 +20,8 @@ if [ ! -d src ]; then
 
   src_dir="$(find "$tmp_dir/extracted" -type d -name src -print -quit)"
   if [ -z "$src_dir" ]; then
+    echo 'RC1 archive layout (first 120 entries):' >&2
+    find "$tmp_dir/extracted" -maxdepth 5 -printf '%P\n' | sed '/^$/d' | sort | head -120 >&2
     echo 'ERROR: the RC1 runtime archive does not contain a src/ directory.' >&2
     exit 1
   fi
