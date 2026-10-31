@@ -37,11 +37,14 @@ if [ ! -f package.json ] || [ ! -d app ]; then
   exit 1
 fi
 
-# The archived lockfile is stale relative to package.json. Regenerate it for staging
-# instead of letting npm ci fail before the application can be validated.
 printf '%s\n' 'KAYAN ERP staging: refreshing runtime dependency lock...'
 rm -f package-lock.json
 npm install --no-audit --no-fund
+
+# The archived Next.js app uses Tailwind/PostCSS configuration but its package
+# manifest omitted the build-time CSS toolchain. Install it explicitly for staging.
+printf '%s\n' 'KAYAN ERP staging: ensuring CSS build toolchain...'
+npm install --no-save --no-audit --no-fund tailwindcss@3.4.17 postcss@8 autoprefixer@10
 
 printf '%s\n' 'KAYAN ERP staging: building Next.js application...'
 npx next build
