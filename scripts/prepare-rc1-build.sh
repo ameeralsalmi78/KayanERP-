@@ -37,6 +37,12 @@ if [ ! -f package.json ] || [ ! -d app ]; then
   exit 1
 fi
 
+# The repository root previously contained a Vite shell. Those files are not
+# part of the RC1 Next.js runtime and make Next's TypeScript pass resolve Vite
+# packages that are intentionally absent. Remove the stale shell before build.
+printf '%s\n' 'KAYAN ERP staging: removing stale Vite shell files...'
+rm -f vite.config.ts vite.config.js vite.config.mjs
+
 printf '%s\n' 'KAYAN ERP staging: refreshing runtime dependency lock...'
 rm -f package-lock.json
 npm install --no-audit --no-fund
