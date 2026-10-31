@@ -1,95 +1,68 @@
 /*
-  ================================
-  إضافة Super Admin الرئيسي
-  ================================
+  KAYAN ERP — Promote an existing authenticated user to Super Admin
 
-  المستخدم: Ameer Al-Salmi
-  البريد: ameer.alsalmi90@gmail.com
-
-  ⚠️ ملاحظة مهمة: يجب عليك أولاً تسجيل حساب في النظام بهذا البريد
-  ثم تنفيذ هذا الكود SQL في Supabase SQL Editor
+  SECURITY:
+  - This script never creates users and never contains passwords.
+  - Create/reset the account through Supabase Auth using a strong unique password.
+  - Set the target email below before running this script in Supabase SQL Editor.
 */
 
 DO $$
 DECLARE
+  target_email text := 'ameer.alsalmi90@gmail.com';
+  target_name text := 'Ameer Al-Salmi';
   user_uuid uuid;
-  user_exists boolean := false;
 BEGIN
-  -- البحث عن المستخدم في auth.users
   SELECT id INTO user_uuid
   FROM auth.users
-  WHERE email = 'ameer.alsalmi90@gmail.com';
+  WHERE email = target_email;
 
-  -- التحقق من وجود المستخدم
-  IF user_uuid IS NOT NULL THEN
-    user_exists := true;
-
-    -- إضافة المستخدم كـ Super Admin
-    INSERT INTO super_admins (
-      user_id,
-      full_name,
-      email,
-      phone,
-      permissions,
-      is_active,
-      created_at,
-      last_login
-    )
-    VALUES (
-      user_uuid,
-      'Ameer Al-Salmi',
-      'ameer.alsalmi90@gmail.com',
-      NULL, -- يمكن إضافة رقم الهاتف لاحقاً
-      jsonb_build_object(
-        'manage_tenants', true,
-        'manage_subscriptions', true,
-        'manage_users', true,
-        'view_analytics', true,
-        'system_settings', true,
-        'full_access', true
-      ),
-      true,
-      now(),
-      NULL
-    )
-    ON CONFLICT (user_id)
-    DO UPDATE SET
-      is_active = true,
-      full_name = 'Ameer Al-Salmi',
-      permissions = jsonb_build_object(
-        'manage_tenants', true,
-        'manage_subscriptions', true,
-        'manage_users', true,
-        'view_analytics', true,
-        'system_settings', true,
-        'full_access', true
-      ),
-      updated_at = now();
-
-    -- تحديث الـ profile إذا كان موجود
-    UPDATE profiles
-    SET role = 'admin'
-    WHERE user_id = user_uuid;
-
-    RAISE NOTICE '✅ تم إضافة Super Admin بنجاح!';
-    RAISE NOTICE 'User ID: %', user_uuid;
-    RAISE NOTICE 'Email: ameer.alsalmi90@gmail.com';
-    RAISE NOTICE 'Full Name: Ameer Al-Salmi';
-    RAISE NOTICE 'جميع الصلاحيات: مفعلة ✓';
-
-  ELSE
-    RAISE EXCEPTION '❌ خطأ: المستخدم غير موجود! يجب عليك أولاً:
-
-    1. فتح النظام في المتصفح
-    2. تسجيل حساب جديد باستخدام:
-       - البريد: ameer.alsalmi90@gmail.com
-       - كلمة المرور: 778778778
-    3. ثم تنفيذ هذا الكود SQL مرة أخرى
-    ';
+  IF user_uuid IS NULL THEN
+    RAISE EXCEPTION 'User % does not exist in Supabase Auth. Create or reset the account securely first.', target_email;
   END IF;
+
+  INSERT INTO super_admins (
+    user_id,
+    full_name,
+    email,
+    phone,
+    permissions,
+    is_active,
+    created_at,
+    last_login
+  )
+  VALUES (
+    user_uuid,
+    target_name,
+    target_email,
+    NULL,
+    jsonb_build_object(
+      'manage_tenants', true,
+      'manage_subscriptions', true,
+      'manage_users', true,
+      'view_analytics', true,
+      'system_settings', true,
+      'full_access', true
+    ),
+    true,
+    now(),
+    NULL
+  )
+  ON CONFLICT (user_id)
+  DO UPDATE SET
+    is_active = true,
+    full_name = EXCLUDED.full_name,
+    email = EXCLUDED.email,
+    permissions = EXCLUDED.permissions,
+    updated_at = now();
+
+  UPDATE profiles
+  SET role = 'admin'
+  WHERE user_id = user_uuid;
+
+  RAISE NOTICE 'Super Admin privileges granted to %.', target_email;
 END $$;
 
--- التحقق من النتيجة
 SELECT
   sa.id,
   sa.full_name,
@@ -97,8 +70,7 @@ SELECT
   sa.is_active,
   sa.permissions,
   sa.created_at,
-  u.email as auth_email,
-  u.created_at as user_created_at
+  u.created_at AS user_created_at
 FROM super_admins sa
 JOIN auth.users u ON sa.user_id = u.id
 WHERE sa.email = 'ameer.alsalmi90@gmail.com';
