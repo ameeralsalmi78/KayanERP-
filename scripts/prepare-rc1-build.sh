@@ -43,6 +43,18 @@ fi
 printf '%s\n' 'KAYAN ERP staging: removing stale Vite shell files...'
 rm -f vite.config.ts vite.config.js vite.config.mjs
 
+# Force a Render-safe production start command into the unpacked Next.js app.
+# This prevents the archived runtime from falling back to the obsolete Vite
+# preview command that existed in the repository shell.
+printf '%s\n' 'KAYAN ERP staging: configuring Next.js production start command...'
+node <<'NODE'
+const fs = require('fs');
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+pkg.scripts = pkg.scripts || {};
+pkg.scripts.start = 'next start -H 0.0.0.0 -p $PORT';
+fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+NODE
+
 printf '%s\n' 'KAYAN ERP staging: refreshing runtime dependency lock...'
 rm -f package-lock.json
 npm install --no-audit --no-fund
