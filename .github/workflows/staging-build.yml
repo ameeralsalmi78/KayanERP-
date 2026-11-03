@@ -25,3 +25,14 @@ jobs:
 
       - name: Build KAYAN ERP staging
         run: npm run build
+
+      - name: Verify Next.js runtime configuration
+        shell: bash
+        run: |
+          echo '=== PACKAGE SCRIPTS ==='
+          node -e "const p=require('./package.json'); console.log(JSON.stringify(p.scripts||{}, null, 2))"
+          echo '=== ENVIRONMENT VARIABLE NAMES (values are never printed) ==='
+          grep -RhoE 'process\.env\.[A-Z][A-Z0-9_]*|NEXT_PUBLIC_[A-Z][A-Z0-9_]*|SUPABASE_[A-Z][A-Z0-9_]*' app lib components middleware.ts 2>/dev/null \
+            | sed 's/^process\.env\.//' \
+            | sort -u \
+            || true
